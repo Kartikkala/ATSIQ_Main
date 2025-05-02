@@ -48,7 +48,7 @@ const SignupForm = ({setIsLogin}) => {
       setErrors({});
   
       try {
-        const response = await axios.post('http://127.0.0.1:8082/register', {
+        const response = await axios.post('http://82.25.97.97:8082/register', {
           name,
           email,
           password

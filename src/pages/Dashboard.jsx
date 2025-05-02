@@ -60,7 +60,7 @@ function Dashboard() {
       const formData = new FormData()
       formData.append("file", file)
       try {
-        const response = await axios.post("http://localhost:8082/pdf/upload", formData, {
+        const response = await axios.post("http://82.25.97.97:8082/pdf/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             "Authorization" : user.token
