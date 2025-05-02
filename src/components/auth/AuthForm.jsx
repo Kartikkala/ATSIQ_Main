@@ -44,7 +44,7 @@ const AuthForm = () => {
         </div>
         
         <div className="p-6">
-          {isLogin ? <LoginForm /> : <SignupForm />}
+          {isLogin ? <LoginForm /> : <SignupForm setIsLogin={setIsLogin}/>}
           
           <div className="mt-6 text-center">
             <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Eye, EyeOff, Mail, User, Github } from 'lucide-react';
 import FormInput from '../ui/FormInput';
 import Button from '../ui/Button';
+import axios from 'axios';
 
-const SignupForm = () => {
+const SignupForm = ({setIsLogin}) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,18 +40,64 @@ const SignupForm = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
-      
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Signup submitted:', { name, email, password });
+      setErrors({});
+  
+      try {
+        const response = await axios.post('http://127.0.0.1:8082/register', {
+          name,
+          email,
+          password
+        },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Auth-Strategy' : 'jwt'
+        },
+        withCredentials : true
+      });
+  
+        if (!response.status === 201) {
+          if (response.status === 400) {
+            throw new Error('Invalid username or password');
+          } else if (response.status === 404) {
+            throw new Error('User not found');
+          } 
+          else if (response.status === 409) {
+            throw new Error('Duplicate');
+          } else {
+            throw new Error(`Server error: ${response.status}`);
+          }
+        }
+
+        setIsLogin(true)
+  
+      } catch (error) {
+        console.error('Login failed:', error.message);
+        
+        // Handle different types of errors
+        if (error.message === 'Failed to fetch') {
+          setErrors({ 
+            submit: 'Network error. Please check your connection and try again.' 
+          });
+        } 
+        else if (error.response.status === 409) {
+          setErrors({ 
+            submit: 'Email aready exists!' 
+          });
+        } 
+        else {
+          setErrors({ 
+            submit: error.message || 'Register failed. Please try again.' 
+          });
+        }
+      } finally {
         setIsSubmitting(false);
-        // Here you would typically redirect the user or update app state
-      }, 1500);
+      }
     }
   };
 
@@ -126,6 +173,10 @@ const SignupForm = () => {
       >
         Create account
       </Button>
+
+      {errors.submit && (
+        <p className="text-red-500 text-sm">{errors.submit}</p>
+      )}
 
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
