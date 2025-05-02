@@ -4,6 +4,7 @@ import { Eye, EyeOff, Github, Mail } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
 import FormInput from '../ui/FormInput';
 import Button from '../ui/Button';
+import axios from 'axios';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -33,11 +34,6 @@ const LoginForm = () => {
   };
 
 
-// Fake/mock users data
-const mockUsers = [
-  { email: 'kartikkala@gmail.com', password: '123456', name: 'John Doe', token: 'fake-john-token' },
-  { email: 'paraskamdar@gmail.com', password: '123456', name: 'Paras kamdar', token: 'fake-jane-token' }
-];
 
 // Handle login using mock data
 const handleSubmit = async (e) => {
@@ -48,31 +44,58 @@ const handleSubmit = async (e) => {
     setErrors({});
 
     try {
-      const user = mockUsers.find(
-        (u) => u.email === email && u.password === password
-      );
+      const response = await axios.post('http://127.0.0.1:8080/login', {
+        email,
+        password
+      },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Auth-Strategy' : 'jwt'
+      },
+      withCredentials : true
+    });
 
-      if (!user) {
-        throw new Error('Invalid username or password');
+      if (!response.status === 200) {
+        if (response.status === 400) {
+          throw new Error('Invalid username or password');
+        } else if (response.status === 404) {
+          throw new Error('User not found');
+        } else {
+          throw new Error(`Server error: ${response.status}`);
+        }
       }
 
-      // Simulate a successful login
-      const storage = rememberMe ? localStorage : sessionStorage;
-      storage.setItem('token', user.token);
-      storage.setItem('user', JSON.stringify(user));
+      const data = await response.headers;
 
-      login(user); // Update auth state
+      const storage = rememberMe ? localStorage : sessionStorage;
+      storage.setItem('token', data.getAuthorization());
+      storage.setItem('user', JSON.stringify(data));
+
+
+      login({
+        token : data.getAuthorization()
+      });
       navigate('/dashboard');
 
     } catch (error) {
-      setErrors({ submit: error.message });
+      console.error('Login failed:', error);
+      
+      // Handle different types of errors
+      if (error.message === 'Failed to fetch') {
+        setErrors({ 
+          submit: 'Network error. Please check your connection and try again.' 
+        });
+      } else {
+        setErrors({ 
+          submit: error.message || 'Login failed. Please try again.' 
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
   }
 };
-
-
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
