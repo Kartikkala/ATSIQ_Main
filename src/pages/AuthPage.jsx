@@ -27,26 +27,26 @@ function AuthPage() {
               <div className="flex justify-center lg:justify-start mb-6">
                 <div className="flex items-center space-x-2 text-2xl font-bold">
                   <BookOpen className="w-8 h-8" />
-                  <span>Typography</span>
+                  <span>VitaScan</span>
                 </div>
               </div>
               
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight lg:leading-tight mb-6">
-                The art of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">written</span> communication
+                The art of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">Resume</span> optimization
               </h1>
               
               <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-8 leading-relaxed">
-                Join our community of typography enthusiasts and elevate your design skills through thoughtful type selection and layout.
+              Join thousands of job seekers using our AI-powered platform to analyze, improve, and tailor their resumes for better ATS compatibility and higher job match scores.
               </p>
               
               <div className="grid grid-cols-2 gap-4 max-w-md mx-auto lg:mx-0">
                 <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
                   <div className="font-bold text-3xl text-blue-600 dark:text-blue-400 mb-1">200+</div>
-                  <div className="text-slate-600 dark:text-slate-400 text-sm">Curated fonts</div>
+                  <div className="text-slate-600 dark:text-slate-400 text-sm">AI-Optimized Resume Templates & Expert Tips</div>
                 </div>
                 <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-sm">
-                  <div className="font-bold text-3xl text-indigo-600 dark:text-indigo-400 mb-1">50k+</div>
-                  <div className="text-slate-600 dark:text-slate-400 text-sm">Active members</div>
+                  <div className="font-bold text-3xl text-indigo-600 dark:text-indigo-400 mb-1">1000+</div>
+                  <div className="text-slate-600 dark:text-slate-400 text-sm">Resumes Analyzed and Enhanced by Our AI</div>
                 </div>
               </div>
             </div>
