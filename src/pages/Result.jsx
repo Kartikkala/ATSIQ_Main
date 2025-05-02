@@ -6,13 +6,8 @@ import Button from '../components/ui/Button';
 function Result() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { pdfUrl, atsScore = 78, feedbackPoints = [
-    "Missing quantifiable achievements in work experience",
-    "Professional summary needs more industry-specific keywords",
-    "Education section lacks relevant coursework details",
-    "Skills section could be more comprehensive",
-    "Contact information missing LinkedIn profile"
-  ] } = location.state || {};
+  const { pdfUrl, atsScore = 78, feedbackPoints = [],
+    missingSections = [], wordReplacments = {}} = location.state || {};
 
   if (!pdfUrl) {
     return (
@@ -36,8 +31,8 @@ function Result() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="bg-slate-50 dark:bg-slate-950 h-screen overflow-clip">
+      <div className="w-9/12 mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
         <div className="mb-8">
           <Button
             variant="ghost"
@@ -49,27 +44,29 @@ function Result() {
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 h-[95%] overflow-auto">
           {/* PDF Preview Section */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm overflow-hidden">
-            <div className="p-8">
+          <div className="dark:bg-slate-900 rounded-2xl shadow-sm h-full"> {/* White bg */}
+            <div className="w-full h-full">
               <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
                 Resume Preview
               </h2>
               
-              <div className="w-full h-[800px] bg-slate-100 dark:bg-slate-800 rounded-lg overflow-hidden">
+              <div className="w-full h-5/6 bg-slate-100 dark:bg-slate-800 rounded-lg">
                 <iframe
-                  src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+                  src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0&view=FitH`}
                   className="w-full h-full"
                   title="PDF Preview"
                   frameBorder="0"
                 />
               </div>
+              
+
             </div>
           </div>
 
           {/* AI Feedback Section */}
-          <div className="space-y-8">
+          <div className="space-y-8 h-[90%] overflow-auto rounded-xl">
             {/* ATS Score Card */}
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8">
               <div className="flex items-center justify-between mb-3">
@@ -92,11 +89,11 @@ function Result() {
             </div>
 
             {/* Feedback Points */}
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8">
+            {feedbackPoints && feedbackPoints.length ? <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8">
               <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
                 Detailed Feedback
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-4 max-h-[10%] overflow-auto">
                 {feedbackPoints.map((point, index) => (
                   <div 
                     key={index}
@@ -107,7 +104,41 @@ function Result() {
                   </div>
                 ))}
               </div>
-            </div>
+            </div> : null}
+
+            {missingSections && missingSections.length ? <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+                Missing Sections
+              </h2>
+              <div className="space-y-4">
+                {missingSections.map((point, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-start p-4 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all hover:bg-slate-100 dark:hover:bg-slate-700"
+                  >
+                    <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                    <p className="ml-3 text-slate-700 dark:text-slate-300 leading-relaxed">{point}</p>
+                  </div>
+                ))}
+              </div>
+            </div> : null}
+
+            {wordReplacments && Object.keys(wordReplacments).length > 0? <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm p-8">
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white mb-6">
+                Word Replacements
+              </h2>
+              <div className="space-y-4">
+                {Object.keys(wordReplacments).map((word, index) => (
+                  <div 
+                    key={index}
+                    className="flex items-start p-4 bg-slate-50 dark:bg-slate-800 rounded-xl transition-all hover:bg-slate-100 dark:hover:bg-slate-700"
+                  >
+                    <AlertCircle className="w-5 h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                    <p className="ml-3 text-slate-700 dark:text-slate-300 leading-relaxed">Change <span className='font-bold'>{word}</span> to <span className='font-bold'>{wordReplacments[word]}.</span></p>
+                  </div>
+                ))}
+              </div>
+            </div> : null}
 
             {/* Action Buttons */}
             <div className="flex gap-4">

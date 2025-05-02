@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { BookOpen, Menu, X, LogOut, Sun, Moon, Upload, CheckCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
+import axios from 'axios';
 
 function Dashboard() {
   const { user, logout } = useAuth();
@@ -53,10 +54,32 @@ function Dashboard() {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (file) {
       const pdfUrl = URL.createObjectURL(file);
-      navigate('/result', { state: { pdfUrl } });
+      const formData = new FormData()
+      formData.append("file", file)
+      try {
+        const response = await axios.post("http://localhost:8080/pdf/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "Authorization" : user.token
+          }
+        });
+        
+        console.log("Server response: " + JSON.stringify(response.data));
+        navigate('/result', { state: { 
+          pdfUrl,
+          atsScore : response.data.score,
+          feedbackPoints : response.data.suggestions.style_feedback,
+          missingSections : response.data.suggestions.missing_sections,
+          wordReplacements : response.data.suggestions.word_replacements
+        } });
+
+      } catch (err) {
+        console.error("Upload failed:", err);
+        alert("Upload failed. Check console for details.");
+      }
     }
   };
 
